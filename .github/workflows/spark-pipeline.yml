@@ -60,6 +60,11 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
+      - name: Sync Scripts to Local Project Folder
+        run: |
+          mkdir -p /Users/andreychvankov/Projects/spark/scripts
+          cp -R scripts/ /Users/andreychvankov/Projects/spark/scripts/
+
       - name: Upload Scripts to MinIO (S3)
         run: |
           # Настраиваем временные доступы для awscli, чтобы достучаться до локального MinIO
