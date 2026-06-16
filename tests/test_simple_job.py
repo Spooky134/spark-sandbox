@@ -11,10 +11,8 @@ def spark_session():
         .master("local[*]") \
         .appName("spark-unit-tests") \
         .getOrCreate()
-
     yield spark
     spark.stop()
-
 
 
 def test_my_simple_job_logic(spark_session):
