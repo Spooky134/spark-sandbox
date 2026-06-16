@@ -21,6 +21,12 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # Надежный дистрибутив Java
+          java-version: '17'
+
       - name: Install dependencies
         run: |
           uv venv
