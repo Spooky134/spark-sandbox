@@ -10,7 +10,7 @@ def main():
 
     try:
         # 1. Генерируем распределенный датафрейм
-        data = [("Andrey", "Data Engineer"), ("Gemini", "AI Assistant")]
+        data = [("Andrey", "Data Engineer"), ("Gemini", "AI Assistant"), ("Zina", "DBA")]
         columns = ["name", "role"]
         df = spark.createDataFrame(data, schema=columns)
 
