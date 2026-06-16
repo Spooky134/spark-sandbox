@@ -24,7 +24,7 @@ def main():
 
         # Пишем в HDFS
         df.write.mode("overwrite").csv("hdfs://namenode:9000/test_folder/people")
-
+        df.write.mode("overwrite").csv("hdfs://namenode:9000/test_folder/people1")
     finally:
         spark.stop()
 
