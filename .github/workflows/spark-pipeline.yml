@@ -60,7 +60,7 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
-      - name: Sync Scripts to Local Project Folder
+      - name: Sync Scripts to Local Spark Folder
         run: |
           mkdir -p /Users/andreychvankov/Projects/spark/scripts
           cp -R scripts/ /Users/andreychvankov/Projects/spark/scripts/
