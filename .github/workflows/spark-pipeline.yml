@@ -1,0 +1,65 @@
+name: Spark Job CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  # === ЭТАП 1: ТЕСТИРОВАНИЕ (Запускается и на PR, и на push в main) ===
+  run-tests:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync --group test
+
+      - name: Run Pytest (Local Mode)
+        run: |
+          # Тесты отработают локально на Маке в режиме local[*] без участия Docker
+          uv run --group test pytest tests/
+
+  # === ЭТАП 2: ДЕПЛОЙ (Сработает ТОЛЬКО когда код попал в ветку main) ===
+#  deploy:
+#    runs-on: self-hosted
+#    needs: run-tests # Деплоим только если тесты прошли успешно
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#
+#    steps:
+#      - name: Checkout repository code
+#        uses: actions/checkout@v4
+#
+#      - name: Copy Scripts to Spark Volume Folder
+#        run: |
+#          cp -r scripts/* /Users/andreychvankov/Projects/spark/scripts/
+
+  deploy:
+    runs-on: self-hosted
+    needs: run-tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Upload Scripts to MinIO (S3)
+        run: |
+          # Настраиваем временные доступы для awscli, чтобы достучаться до локального MinIO
+          export AWS_ACCESS_KEY_ID=minioadmin
+          export AWS_SECRET_ACCESS_KEY=minioadminpassword
+          export AWS_DEFAULT_REGION=us-east-1
+          
+          # Загружаем всю папку со скриптами в наш бакет
+          aws --endpoint-url http://localhost:9000 s3 cp scripts/ s3://spark-jobs/scripts/ --recursive
