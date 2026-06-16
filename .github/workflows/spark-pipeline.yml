@@ -65,12 +65,12 @@ jobs:
           mkdir -p /Users/andreychvankov/Projects/spark/scripts
           cp -R scripts/ /Users/andreychvankov/Projects/spark/scripts/
 
-      - name: Upload Scripts to MinIO (S3)
-        run: |
-          # Настраиваем временные доступы для awscli, чтобы достучаться до локального MinIO
-          export AWS_ACCESS_KEY_ID=minioadmin
-          export AWS_SECRET_ACCESS_KEY=minioadminpassword
-          export AWS_DEFAULT_REGION=us-east-1
-          
-          # Загружаем всю папку со скриптами в наш бакет
-          aws --endpoint-url http://localhost:9000 s3 cp scripts/ s3://spark-jobs/scripts/ --recursive
+#      - name: Upload Scripts to MinIO (S3)
+#        run: |
+#          # Настраиваем временные доступы для awscli, чтобы достучаться до локального MinIO
+#          export AWS_ACCESS_KEY_ID=minioadmin
+#          export AWS_SECRET_ACCESS_KEY=minioadminpassword
+#          export AWS_DEFAULT_REGION=us-east-1
+#
+#          # Загружаем всю папку со скриптами в наш бакет
+#          aws --endpoint-url http://localhost:9000 s3 cp scripts/ s3://spark-jobs/scripts/ --recursive
