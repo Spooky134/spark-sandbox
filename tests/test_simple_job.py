@@ -1,37 +1,34 @@
 import pytest
 from pyspark.sql import SparkSession
+# Импортируем логику из твоего скрипта
+from scripts.simple_job import transform_data
 
 
-# Фикстура, которая создает локальную сессию Спарка специально для тестов
 @pytest.fixture(scope="session")
 def spark_session():
+    """Поднимаем локальный Спарк для теста"""
     spark = SparkSession.builder \
         .master("local[*]") \
         .appName("spark-unit-tests") \
         .getOrCreate()
-
     yield spark
-
     spark.stop()
 
 
-# Сам тест, который проверяет базовую трансформацию данных
-def test_spark_transformation(spark_session):
-    # 1. Готовим тестовые (mock) данные
-    source_data = [("andrey",), ("gemini",)]
-    columns = ["name"]
+def test_my_simple_job_logic(spark_session):
+    # 1. Запускаем ТВОЮ функцию трансформации
+    result_df = transform_data(spark_session)
 
-    df = spark_session.createDataFrame(source_data, schema=columns)
+    # 2. Собираем строки для проверки
+    rows = result_df.collect()
 
-    # 2. Делаем простую трансформацию (например, переводим имена в верхний регистр)
-    from pyspark.sql import functions as F
-    result_df = df.withColumn("name_upper", F.upper(F.col("name")))
+    # 3. Проверяем, что твоя функция создала именно те данные, которые зашиты в коде
+    assert len(rows) == 2
 
-    # 3. Собираем результат в Python-список
-    # collect() на тестах — это ок, так как данных всего пару строк
-    actual_rows = result_df.collect()
+    # Проверяем первую строку (Andrey)
+    assert rows[0]["name"] == "Andrey"
+    assert rows[0]["role"] == "Data Engineer"
 
-    # 4. Проверяем утверждения (Asserts)
-    assert len(actual_rows) == 2
-    assert actual_rows[0]["name_upper"] == "ANDREY"
-    assert actual_rows[1]["name_upper"] == "GEMINI"
+    # Проверяем вторую строку (Gemini)
+    assert rows[1]["name"] == "Gemini"
+    assert rows[1]["role"] == "AI Assistant"
