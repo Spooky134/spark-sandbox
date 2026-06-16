@@ -29,7 +29,7 @@ jobs:
       - name: Run Pytest (Local Mode)
         run: |
           # Тесты отработают локально на Маке в режиме local[*] без участия Docker
-          uv run --group test pytest tests/
+          PYTHONPATH=. uv run --group test pytest tests/
 
   # === ЭТАП 2: ДЕПЛОЙ (Сработает ТОЛЬКО когда код попал в ветку main) ===
 #  deploy:
